@@ -3,6 +3,7 @@ package com.appodeal.jira_plugin;
 import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.bulkedit.BulkOperationManager;
 import com.atlassian.jira.bulkedit.operation.ProgressAwareBulkOperation;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.event.operation.SpanningOperation;
 import com.atlassian.jira.event.operation.SpanningOperationType;
 import com.atlassian.jira.issue.issuetype.IssueType;
@@ -44,15 +45,15 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
 
     private final ProgressAwareBulkOperation bilkCloneIssueOperations;
 
-    public BulkCloneIssueAction(SearchService searchService, BulkOperationManager bulkOperationManager, BulkEditBeanSessionHelper bulkEditBeanSessionHelper, PermissionManager permissionManager, TaskManager taskManager, I18nHelper i18nHelper, IssueTypeManager issueTypeManager, IssueLinkTypeManager issueLinkTypeManager) {
-        super(searchService, bulkEditBeanSessionHelper, taskManager, i18nHelper);
+    public BulkCloneIssueAction() {
+        super((SearchService) ComponentAccessor.getComponent(SearchService.class), (BulkEditBeanSessionHelper) ComponentAccessor.getComponent(BulkEditBeanSessionHelper.class), (TaskManager) ComponentAccessor.getComponent(TaskManager.class), (I18nHelper) ComponentAccessor.getComponent(I18nHelper.class));
         System.out.println("ZA-------BulkCloneIssueAction INIT-------ZA");
-        this.permissionManager = permissionManager;
-        this.issueTypeManager = issueTypeManager;
-        this.issueLinkTypeManager = issueLinkTypeManager;
+        this.permissionManager = ComponentAccessor.getComponent(PermissionManager.class);
+        this.issueTypeManager = ComponentAccessor.getComponent(IssueTypeManager.class);
+        this.issueLinkTypeManager = ComponentAccessor.getComponent(IssueLinkTypeManager.class);
         this.types = issueTypeManager.getIssueTypes();
         this.links = issueLinkTypeManager.getIssueLinkTypes();
-        this.bilkCloneIssueOperations = bulkOperationManager.getProgressAwareOperation("bulk.clone.issue.operation.name");
+        this.bilkCloneIssueOperations = ComponentAccessor.getComponent(BulkOperationManager.class).getProgressAwareOperation("bulk.clone.issue.operation.name");
         System.out.println("ZA-------BulkCloneIssueAction END-------ZA");
     }
 

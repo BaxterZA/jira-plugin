@@ -9,10 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
+import javax.inject.Named;
+
 //import javax.inject.Inject;
 //import javax.inject.Named;
 
-//@Named("BulkCloneIssuePluginListener")
+@Named("BulkCloneIssuePluginListener")
 public class BulkCloneIssuePluginListener implements InitializingBean, DisposableBean {
     private static final Logger log = LoggerFactory.getLogger(BulkCloneIssuePluginListener.class);
     private final EventPublisher eventPublisher;

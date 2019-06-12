@@ -33,19 +33,16 @@
             <scope>provided</scope>
         </dependency>
 
+
+
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
             <artifactId>atlassian-spring-scanner-annotation</artifactId>
             <version>${atlassian.spring.scanner.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.atlassian.plugin</groupId>
-            <artifactId>atlassian-spring-scanner-runtime</artifactId>
-            <version>${atlassian.spring.scanner.version}</version>
             <scope>provided</scope>
         </dependency>
+
+
 
         <dependency>
             <groupId>javax.inject</groupId>
@@ -142,6 +139,7 @@
                     <allowGoogleTracking>false</allowGoogleTracking>
                     <skipManifestValidation>true</skipManifestValidation>
                     <extractDependencies>false</extractDependencies>
+<!--                 TODO Check   <DynamicImport-Package>*</DynamicImport-Package>-->
 
                     <pluginArtifacts>
                         <pluginArtifact>
@@ -165,6 +163,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <includeExclude>-com.atlassian.plugin.spring.scanner.annotation.*</includeExclude>
                     <scannedDependencies>
                         <dependency>
                             <groupId>com.atlassian.plugin</groupId>
@@ -185,7 +184,7 @@
         </plugins>
     </build>
     <properties>
-        <jira.version>8.1.0</jira.version>
+        <jira.version>8.0.2</jira.version>
         <amps.version>8.0.0</amps.version>
         <atlassian.spring.scanner.version>2.1.9</atlassian.spring.scanner.version>
         <quick.reload.version>2.0.0</quick.reload.version>
