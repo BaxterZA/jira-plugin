@@ -1,0 +1,37 @@
+#disable_html_escaping()
+<html>
+<head>
+	<title>$action.getText('bulkedit.title')</title>
+</head>
+<body>
+	
+$soyRenderer.render('com.atlassian.auiplugin:aui-experimental-soy-templates','aui.page.pageHeader',{
+    'content': "<h1>$i18n.getText('bulkedit.title')<h1>"
+})
+
+#set( $data = "#parse('templates/bulk/includes/bulkoperation_leftpanel.vm')")
+#set ($left = $!{soyRenderer.render('com.atlassian.auiplugin:aui-experimental-soy-templates', 'aui.page.pagePanelNav', {
+        'content': ${data}   
+})}
+
+)
+
+#set($rightdata="#parse('templates/bulk/cloneIssue/cloneIssueRightScreenConfirm.vm')")
+
+#set ($right = $!{soyRenderer.render('com.atlassian.auiplugin:aui-experimental-soy-templates', 'aui.page.pagePanelContent', {
+        'content': ${rightdata}
+})}
+
+)
+
+#set ($mainpage="$left$right")
+
+$soyRenderer.render('com.atlassian.auiplugin:aui-experimental-soy-templates','aui.page.pagePanel',{
+	'id':"stepped-process",
+    'content':  ${mainpage} 		 
+			 
+})
+
+
+</body>
+</html>

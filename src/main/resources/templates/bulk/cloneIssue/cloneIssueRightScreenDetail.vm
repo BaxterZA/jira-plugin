@@ -1,0 +1,119 @@
+<h2>$i18n.getText('bulkedit.step3'): $i18n.getText('bulkedit.step3.title')</h2>
+<h3>$i18n.getText("bulk.clone.issue.operation.name")</h3>
+
+<form action="BulkCloneIssueDetailsValidation.jspa" class="top-label" id="bulkedit" method="post">
+    <input type="hidden" name="atl_token" value="$atl_token"/>
+
+    <div class="form-body">
+
+
+        <div class="hidden">
+
+            <fieldset class="hidden parameters">
+                <input name="oldPrefix" type="hidden" value="$!newPrefix">
+                <input name="oldType" type="hidden" value="$!newType">
+                <input name="oldLink" type="hidden" value="$!newLink">
+            </fieldset>
+
+            <input name="atl_token" type="hidden" value="$action.xsrfToken"/>
+
+        </div>
+        <p>
+            #set($issueCount="<b>"+$bulkEditBean.selectedIssues.size()+"</b>")
+                        	$action.getText('bulk.clone.step2.desc',$issueCount)
+        </p>
+
+        #if ($action.hasAnyErrors())
+            <tr>
+                <td colspan="2">
+                    <div class="aui-message error">
+                        <span class="aui-icon icon-error"></span>
+                        <p class="title">$i18n.getText('common.words.errors')</p>
+                        <ul>
+                            #foreach ($error in $action.getErrorMessages())
+                                <li>$i18n.getText(${error})</li>
+                            #end
+                            #foreach ($error in $action.errors)
+                                <li>$i18n.getText(${error})</li>
+                            #end
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        #end
+
+        <br/>
+        <table id="label">
+            <tbody>
+            <tr class="availableActionRow">
+
+                <td style="max-width: 200px; width: 300px; word-wrap: break-word;">
+                    <label for="prefix">$action.getText('bulk.clone.step2.newissue.prefix')</label>
+                </td>
+
+                <td class="aui-field-labelpicker" id="labels_container">
+                    <input class="text" type="text" id="prefix" name="prefix" value="$textutils.htmlEncode($!newPrefix)" >
+##                    <div class="description">${i18n.getText('custom.label.edit.start.typing')}</div>
+                </td>
+            </tr>
+
+
+            <tr class="availableActionRow">
+
+                <td style="max-width: 200px; width: 300px; word-wrap: break-word;">
+                    <label for="issueType">$action.getText('bulk.clone.step2.newissue.type')</label>
+                </td>
+
+                <td>
+                    <select class="select" id="issueType" name="issueType">
+                        #if (!$issueType || $issueType == "-1")
+                            <option value="-1" selected="selected">$i18n.getText("common.words.pleaseselect")</option>
+                        #end
+                        #foreach ($type in $types)
+                            <option#if ($issueType && $type.getId() && $issueType == $type.getId())
+                                    selected="selected"#end value="$!type.getId()">
+                                $textutils.htmlEncode($type.getNameTranslation())
+                            </option>
+                        #end
+                    </select>
+                </td>
+            </tr>
+
+
+            <tr class="availableActionRow">
+
+                <td style="max-width: 200px; width: 300px; word-wrap: break-word;">
+                    <label for="linkType">$action.getText('bulk.clone.step2.newissue.link')</label>
+                </td>
+
+                <td>
+                    <select class="select" id="linkType" name="linkType">
+                        #if (!$linkType || $linkType == "-1")
+                            <option value="-1" selected="selected">$i18n.getText("common.words.pleaseselect")</option>
+                        #end
+                        #foreach ($link in $links)
+                            <option#if ($linkType && $link.getId() && $linkType == $link.getId())
+                                    selected="selected"#end value="$!link.getId()">
+                                $textutils.htmlEncode($link.getName())
+                            </option>
+                        #end
+                    </select>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <br/>
+
+        <p>
+
+            <input class="aui-button" type="submit" id="next" name="Next" value="Next" accesskey="s"
+                   title="Press Alt+s to submit form">
+
+            <a class="aui-button aui-button-link" id="cancel" href="BulkCancelWizard.jspa">Cancel</a>
+        </p>
+    </div>
+
+    </div>
+
+</form>

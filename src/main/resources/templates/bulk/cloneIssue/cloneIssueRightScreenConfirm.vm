@@ -1,0 +1,78 @@
+<h2>$i18n.getText('bulkedit.step4'): $i18n.getText('bulkedit.step4.title')</h2>
+<h3>$i18n.getText("bulk.clone.issue.operation.name")</h3>
+
+<form action="BulkCloneIssuePerform.jspa" class="top-label" id="bulkedit" method="post">
+    <input type="hidden" name="atl_token" value="$atl_token"/>
+
+    <div class="form-body">
+
+
+        <div class="hidden">
+
+            <fieldset class="hidden parameters">
+                <input name="prefix" type="hidden" value="$!prefix">
+                <input name="issueType" type="hidden" value="$!issueType">
+                <input name="linkType" type="hidden" value="$!linkType">
+            </fieldset>
+
+            <input name="atl_token" type="hidden" value="$action.xsrfToken"/>
+
+        </div>
+
+
+        <br/>
+
+        <table class="aui aui-table-rowhover" id="updatedfields">
+            <thead>
+            <tr>
+                <th>$action.getText('bulk.move.fieldname')</th>
+                <th>$action.getText('bulk.move.fieldvalue')</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="max-width: 200px; width: 200px; word-wrap: break-word;">
+                    <label for="prefix">$action.getText('bulk.clone.issue.field.prefix')</label>
+                </td>
+                <td>
+                    $!action.getPrefixName()
+                </td>
+            </tr>
+            <tr>
+                <td style="max-width: 200px; width: 200px; word-wrap: break-word;">
+                    <label for="issueType">$action.getText('bulk.clone.issue.field.type')</label>
+                </td>
+                <td>
+                    $!action.getTypeName()
+                </td>
+            </tr>
+            <tr>
+                <td style="max-width: 200px; width: 200px; word-wrap: break-word;">
+                    <label for="linkType">$action.getText('bulk.clone.issue.field.link')</label>
+                </td>
+                <td>
+                    $!action.getLinkName()
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <br/>
+
+
+        #set($issueCount="<b>"+$bulkEditBean.selectedIssues.size()+"</b>")
+        #set($messageHtml="<p>"+$action.getText('bulkedit.confirm.msg',$issueCount)+"</p>")
+
+        #AUImessage("info" "" "$messageHtml" "" "" "" "false")
+
+        <p>
+            <input class="aui-button" type="submit" id="next" name="Next"
+                   value=$action.getText("common.forms.confirm") accesskey="s" title="Press Alt+s to submit form">
+
+            <a class="aui-button aui-button-link" id="cancel" href="BulkCancelWizard.jspa">Cancel</a>
+        </p>
+
+
+    </div>
+
+</form>

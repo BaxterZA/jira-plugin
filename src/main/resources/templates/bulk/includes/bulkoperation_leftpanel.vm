@@ -1,0 +1,70 @@
+<ol class="steps">
+#if(!$rootBulkEditBean.singleMode)
+	#if($rootBulkEditBean.currentStep == 1)
+		<li class="current">$action.getText('bulkedit.step1.title')</li>
+	#else
+		  <li>
+		  	#if($rootBulkEditBean.isAvailablePreviousStep(1) == "true")
+				#if($rootBulkEditBean.maxIssues > 0)
+					<a id="bulkedit_chooseissues" href="BulkEdit1!default.jspa?currentStep=1&tempMax=$rootBulkEditBean.maxIssues">$action.getText('bulkedit.step1.title')</a>				
+				#else
+					<a id="bulkedit_chooseissues" href="BulkEdit1!default.jspa?currentStep=1">$action.getText('bulkedit.step1.title')</a>				
+				#end
+			#else	
+				$action.getText('bulkedit.step1.title')				
+		  	#end		  	
+		  	<br />
+		  	#set($selectedIssueCount = "<strong>"+$rootBulkEditBean.selectedIssues.size()+"</strong>")
+		  	#set($selectedProjectCount = "<strong>"+$rootBulkEditBean.projectIds.size()+"</strong>")
+		  	$action.getText('bulkedit.step1.status',[$selectedIssueCount,$selectedProjectCount]) 
+		  </li>			
+	#end	
+
+	#if($rootBulkEditBean.currentStep == 2)
+	    <li class="current">$action.getText('bulkedit.step2.title')</li>
+	#elseif($rootBulkEditBean.currentStep > 2)
+		<li>
+		#if($rootBulkEditBean.isAvailablePreviousStep(2) == "true")
+           <a href="BulkChooseOperation!default.jspa">$action.getText('bulkedit.step2.title')</a>
+		#else
+			$action.getText('bulkedit.step2.title')
+		#end
+		</li>
+	#else
+		<li>
+			$action.getText('bulkedit.step2.title')
+		</li>		
+	#end
+
+
+#end
+
+	#if($rootBulkEditBean.currentStep == 3)
+	
+	    <li class="current">$action.getText('bulkedit.step3.title')</li>
+
+	#elseif($rootBulkEditBean.currentStep > 3)
+		<li>
+		#if($rootBulkEditBean.isAvailablePreviousStep(3) == "true")
+           <a href="$baseurl$operationDetailsActionName">$action.getText('bulkedit.step3.title')</a>
+		#else
+			$action.getText('bulkedit.step3.title')
+		#end
+		</li>
+	#else
+		<li>
+			$action.getText('bulkedit.step3.title')
+		</li>	
+	#end
+
+	#if($rootBulkEditBean.currentStep == 4)
+	
+	    <li class="current">$action.getText('bulkedit.step4.title')</li>
+
+	#else
+		<li>
+			$action.getText('bulkedit.step4.title')
+		</li>	
+	#end
+
+</ol>
