@@ -10,7 +10,7 @@
     <!-- add our i18n resource -->
     <resource type="i18n" name="i18n" location="jira_plugin"/>
 
-    <webwork1 key="clone-bulk-action" name="Extended Bulk Operation Actions" class="java.lang.Object">
+    <webwork1 key="clone-bulk-action" name="Bulk Cloning Operation" class="java.lang.Object">
         <actions>
             <action name="com.appodeal.jira_plugin.BulkCloneIssueAction" alias="BulkCloneIssue">
                 <command name="details" alias="BulkCloneIssueDetails">
