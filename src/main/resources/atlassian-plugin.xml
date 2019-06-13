@@ -28,7 +28,4 @@
             </action>
         </actions>
     </webwork1>
-
-<!--    <component key="za-jira-plugin-event-listener" class="com.appodeal.jira_plugin.BulkCloneIssuePluginListener" />-->
-
 </atlassian-plugin>

@@ -11,24 +11,21 @@ import org.springframework.beans.factory.InitializingBean;
 
 import javax.inject.Named;
 
-//import javax.inject.Inject;
-//import javax.inject.Named;
-
+@SuppressWarnings("unused")
 @Named("BulkCloneIssuePluginListener")
 public class BulkCloneIssuePluginListener implements InitializingBean, DisposableBean {
     private static final Logger log = LoggerFactory.getLogger(BulkCloneIssuePluginListener.class);
     private final EventPublisher eventPublisher;
 
+    @SuppressWarnings("unused")
     public BulkCloneIssuePluginListener(EventPublisher eventPublisher) {
-        log.info("ZA-------INIT-------ZA");
-        System.out.println("ZA------INIT------ZA");
+        log.debug("INIT");
         this.eventPublisher=eventPublisher;
     }
 
     @Override
     public void afterPropertiesSet() {
-        log.info("ZA-------afterPropertiesSet-------ZA");
-        System.out.println("ZA------afterPropertiesSet------ZA");
+        log.debug("afterPropertiesSet");
         eventPublisher.register(this);
         ComponentAccessor.getBulkOperationManager().addProgressAwareBulkOperation("bulk.clone.issue.operation.name", BulkCloneIssueOperation.class);
     }
@@ -41,6 +38,6 @@ public class BulkCloneIssuePluginListener implements InitializingBean, Disposabl
     @SuppressWarnings("unused")
     @EventListener
     public void onPluginEnabled(PluginEnabledEvent event) {
-        System.out.println("ZA------onPluginEnabled------ZA");
+        log.debug("onPluginEnabled");
     }
 }

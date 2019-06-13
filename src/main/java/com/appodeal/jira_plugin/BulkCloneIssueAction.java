@@ -46,29 +46,29 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
 
     public BulkCloneIssueAction() {
         super(ComponentAccessor.getComponent(SearchService.class), ComponentAccessor.getComponent(BulkEditBeanSessionHelper.class), ComponentAccessor.getComponent(TaskManager.class), ComponentAccessor.getComponent(I18nHelper.class));
-        System.out.println("ZA-------BulkCloneIssueAction INIT-------ZA");
+        log.debug("BulkCloneIssueAction INIT");
         this.permissionManager = ComponentAccessor.getComponent(PermissionManager.class);
         this.issueTypeManager = ComponentAccessor.getComponent(IssueTypeManager.class);
         this.issueLinkTypeManager = ComponentAccessor.getComponent(IssueLinkTypeManager.class);
         this.links = issueLinkTypeManager.getIssueLinkTypes();
         this.bilkCloneIssueOperations = ComponentAccessor.getComponent(BulkOperationManager.class).getProgressAwareOperation("bulk.clone.issue.operation.name");
-        System.out.println("ZA-------BulkCloneIssueAction END-------ZA");
+        log.debug("BulkCloneIssueAction END");
     }
 
     @SuppressWarnings("unused")
     public boolean isHasAvailableActions() throws Exception {
-        System.out.println("ZA-------isHasAvailableActions-------ZA");
+        log.debug("isHasAvailableActions");
         return this.getBulkCloneIssueOperation().canPerform(this.getBulkEditBean(), this.getLoggedInUser());
     }
 
     @SuppressWarnings("unused")
     public String getOperationDetailsActionName() {
-        System.out.println("ZA-------getOperationDetailsActionName-------ZA");
+        log.debug("getOperationDetailsActionName");
         return this.getBulkCloneIssueOperation().getOperationName() + "Details.jspa";
     }
 
     private void doPerformValidation() {
-        System.out.println("ZA-------doPerformValidation-------ZA");
+        log.debug("doPerformValidation");
         try {
             getDataFromScreen();
 
@@ -86,15 +86,15 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
     }
 
     private void getDataFromScreen() {
-        System.out.println("ZA-------getDataFromScreen-------ZA");
+        log.debug("getDataFromScreen");
         Map map = getHttpRequest().getParameterMap();
         this.issueType = ParameterUtils.getStringParam(map, "issueType");
         this.linkType = ParameterUtils.getStringParam(map, "linkType");
         this.prefix = ParameterUtils.getStringParam(map, "prefix");
-        System.out.println("ZA-------" + this.issueType + "-------ZA");
-        System.out.println("ZA-------" + this.linkType + "-------ZA");
-        System.out.println("ZA-------" + this.prefix + "-------ZA");
-        System.out.println("ZA-------getDataFromScreen END-------ZA");
+        log.debug("get type:" + this.issueType);
+        log.debug("get link:" + this.linkType);
+        log.debug("get prefix:" + this.prefix);
+        log.debug("getDataFromScreen END");
 
     }
 
@@ -110,7 +110,7 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
     }
 
     public String doDetails() throws Exception {
-        System.out.println("ZA-------doDetails-------ZA");
+        log.debug("doDetails");
         if (this.getBulkEditBean() == null) {
             return this.redirectToStart();
         } else {
@@ -144,7 +144,7 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
     }
 
     public String doDetailsValidation() {
-        System.out.println("ZA-------doDetailsValidation-------ZA");
+        log.debug("doDetailsValidation");
         if (this.getBulkEditBean() == null) {
             return this.redirectToStart();
         } else {
@@ -165,7 +165,7 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
     }
 
     private void doInputValidation() {
-        System.out.println("ZA-------doInputValidation-------ZA");
+        log.debug("doInputValidation");
         if (this.prefix == null) {
             this.prefix = "";
         }
@@ -181,7 +181,7 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
 
     @RequiresXsrfCheck
     public String doPerform() throws Exception {
-        System.out.println("ZA-------doPerform-------ZA");
+        log.debug("doPerform");
         if (this.getBulkEditBean() == null) {
             return this.redirectToStart();
         } else {
@@ -190,9 +190,9 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
                 return ERROR;
             }
             BulkEditBean bulkEditBean = this.getBulkEditBean();
-            System.out.println("ZA-------set type: " + this.issueType + "-------ZA");
-            System.out.println("ZA-------set prefix: " + this.prefix + "-------ZA");
-            System.out.println("ZA-------set link: " + this.linkType + "-------ZA");
+            log.debug("set type: " + this.issueType);
+            log.debug("set prefix: " + this.prefix);
+            log.debug("set link: " + this.linkType);
             bulkEditBean.getFieldValues().put("bulk.clone.issue.operation.field.type", this.issueType);
             bulkEditBean.getFieldValues().put("bulk.clone.issue.operation.field.link", this.linkType);
             bulkEditBean.getFieldValues().put("bulk.clone.issue.operation.field.prefix", this.prefix);
@@ -203,26 +203,26 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
     }
 
     private ProgressAwareBulkOperation getBulkCloneIssueOperation() {
-        System.out.println("ZA-------getBulkCloneIssueOperation-------ZA");
+        log.debug("getBulkCloneIssueOperation");
         return this.bilkCloneIssueOperations;
     }
 
 
     @SuppressWarnings("unused")
     public Collection<IssueType> getTypes() {
-        System.out.println("ZA-------getTypes-------ZA");
+        log.debug("getTypes");
         return types;
     }
 
     @SuppressWarnings("unused")
     public void setTypes(Collection<IssueType> types) {
-        System.out.println("ZA-------setTypes-------ZA");
+        log.debug("setTypes");
         this.types = types;
     }
 
     @SuppressWarnings("unused")
     public Collection<IssueLinkType> getLinks() {
-        System.out.println("ZA-------getLinks-------ZA");
+        log.debug("getLinks");
         return this.links;
     }
 
@@ -233,13 +233,13 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
 
     @SuppressWarnings("unused")
     public String getPrefixName() {
-        System.out.println("ZA-------getPrefixName: " + this.prefix + "-------ZA");
+        log.debug("getPrefixName: " + this.prefix);
         return this.prefix;
     }
 
     @SuppressWarnings("unused")
     public String getTypeName() {
-        System.out.println("ZA-------getTypeName: " + this.issueType + "-------ZA");
+        log.debug("getTypeName: " + this.issueType);
         if ((this.issueType != null) && (!this.issueType.equals("-1")) && (!this.issueType.isEmpty())) {
             return this.issueTypeManager.getIssueType(this.issueType).getNameTranslation();
         }
@@ -248,7 +248,7 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
 
     @SuppressWarnings("unused")
     public String getLinkName() {
-        System.out.println("ZA-------getLinkName: " + this.linkType + "-------ZA");
+        log.debug("getLinkName: " + this.linkType);
         if ((this.linkType != null) && (!this.linkType.equals("-1")) && (!this.linkType.isEmpty())) {
             return this.issueLinkTypeManager.getIssueLinkType(Long.parseLong(this.linkType)).getName();
         }
