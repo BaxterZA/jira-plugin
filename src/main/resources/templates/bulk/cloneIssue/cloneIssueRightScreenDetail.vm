@@ -1,7 +1,7 @@
 <h2>$i18n.getText('bulkedit.step3'): $i18n.getText('bulkedit.step3.title')</h2>
 <h3>$i18n.getText("bulk.clone.issue.operation.name")</h3>
 
-<form action="BulkCloneIssueDetailsValidation.jspa" class="top-label" id="bulkedit" method="post">
+<form action="BulkCloneIssueDetailsValidation.jspa" class="aui top-label" id="bulkedit" method="post">
     <input type="hidden" name="atl_token" value="$atl_token"/>
 
     <div class="form-body">
