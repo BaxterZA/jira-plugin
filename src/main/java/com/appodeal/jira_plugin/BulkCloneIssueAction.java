@@ -5,9 +5,12 @@ import com.atlassian.jira.bulkedit.BulkOperationManager;
 import com.atlassian.jira.bulkedit.operation.ProgressAwareBulkOperation;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.event.operation.SpanningOperation;
+import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.link.IssueLinkType;
 import com.atlassian.jira.issue.link.IssueLinkTypeManager;
+import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.security.xsrf.RequiresXsrfCheck;
@@ -22,9 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Map;
-
+import java.util.*;
 
 
 public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
@@ -49,7 +50,6 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
         this.permissionManager = ComponentAccessor.getComponent(PermissionManager.class);
         this.issueTypeManager = ComponentAccessor.getComponent(IssueTypeManager.class);
         this.issueLinkTypeManager = ComponentAccessor.getComponent(IssueLinkTypeManager.class);
-        this.types = issueTypeManager.getIssueTypes();
         this.links = issueLinkTypeManager.getIssueLinkTypes();
         this.bilkCloneIssueOperations = ComponentAccessor.getComponent(BulkOperationManager.class).getProgressAwareOperation("bulk.clone.issue.operation.name");
         System.out.println("ZA-------BulkCloneIssueAction END-------ZA");
@@ -98,19 +98,6 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
 
     }
 
-    private void doInputValidation() {
-        System.out.println("ZA-------doInputValidation-------ZA");
-        if (this.prefix == null) {
-            this.prefix = "";
-        }
-        if ((this.linkType == null) || (this.linkType.equals("-1"))) {
-            this.linkType = String.valueOf(getDefaultCloneIssueLinkType());
-            if (this.linkType == null) {
-                addErrorMessage(getText("bulk.clone.issue.link.is.null"));
-            }
-        }
-    }
-
     @Nullable
     private Long getDefaultCloneIssueLinkType() {
         Long cloneType = null;
@@ -122,24 +109,38 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
         return cloneType;
     }
 
-    public String doDetails() {
+    public String doDetails() throws Exception {
         System.out.println("ZA-------doDetails-------ZA");
         if (this.getBulkEditBean() == null) {
             return this.redirectToStart();
         } else {
             BulkEditBean bulkEditBean = getBulkEditBean();
+
+            Set<Long> projects = issuesProjectKeysFromIssues(bulkEditBean.getSelectedIssues());
+            if (projects.size() != 1) {
+                addErrorMessage(getText("bulk.clone.issue.error.multiple.project"));
+                return ERROR;
+            } else {
+                ProjectManager projectManager = ComponentAccessor.getComponent(ProjectManager.class);
+                Project project = projectManager.getProjectObj(projects.iterator().next());
+                this.types = project.getIssueTypes();
+            }
+
             bulkEditBean.clearAvailablePreviousSteps();
             bulkEditBean.addAvailablePreviousStep(1);
             bulkEditBean.addAvailablePreviousStep(2);
-            if (this.isCanDisableMailNotifications()) {
-                bulkEditBean.setSendBulkNotification(false);
-            } else {
-                bulkEditBean.setSendBulkNotification(true);
-            }
-
             bulkEditBean.setCurrentStep(3);
+
             return INPUT;
         }
+    }
+
+    private Set<Long> issuesProjectKeysFromIssues(List<Issue> issues) {
+        Set<Long> projects = new HashSet<>();
+        for (Issue issue : issues) {
+            projects.add(issue.getProjectId());
+        }
+        return projects;
     }
 
     public String doDetailsValidation() {
@@ -160,6 +161,21 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
             bulkEditBean.addAvailablePreviousStep(3);
             bulkEditBean.setCurrentStep(4);
             return INPUT;
+        }
+    }
+
+    private void doInputValidation() {
+        System.out.println("ZA-------doInputValidation-------ZA");
+        if (this.prefix == null) {
+            this.prefix = "";
+        }
+        if ((this.linkType == null) || (this.linkType.equals("-1"))) {
+            Long defaultLinkType = getDefaultCloneIssueLinkType();
+            if (defaultLinkType == null) {
+                this.addErrorMessage(getText("bulk.clone.issue.link.is.null"));
+            } else {
+                this.linkType = String.valueOf(defaultLinkType);
+            }
         }
     }
 

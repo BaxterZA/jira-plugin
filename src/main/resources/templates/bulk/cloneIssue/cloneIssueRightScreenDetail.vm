@@ -47,8 +47,8 @@
             <tbody>
             <tr class="availableActionRow">
 
-                <td style="max-width: 200px; width: 300px; word-wrap: break-word;">
-                    <label for="prefix">$action.getText('bulk.clone.step2.newissue.prefix')</label>
+                <td style="max-width: 200px; width: 200px; word-wrap: break-word;">
+                    <label for="prefix">$action.getText('bulk.clone.issue.field.prefix')</label>
                 </td>
 
                 <td class="aui-field-labelpicker" id="labels_container">
@@ -60,12 +60,12 @@
 
             <tr class="availableActionRow">
 
-                <td style="max-width: 200px; width: 300px; word-wrap: break-word;">
-                    <label for="issueType">$action.getText('bulk.clone.step2.newissue.type')</label>
+                <td style="max-width: 200px; width: 200px; word-wrap: break-word;">
+                    <label for="issueType">$action.getText('bulk.clone.issue.field.type')</label>
                 </td>
 
                 <td>
-                    <select class="select" id="issueType" name="issueType">
+                    <select class="select aui-ss-select" id="issueType" name="issueType">
                         #if (!$issueType || $issueType == "-1")
                             <option value="-1" selected="selected">$i18n.getText("common.words.pleaseselect")</option>
                         #end
@@ -82,12 +82,12 @@
 
             <tr class="availableActionRow">
 
-                <td style="max-width: 200px; width: 300px; word-wrap: break-word;">
-                    <label for="linkType">$action.getText('bulk.clone.step2.newissue.link')</label>
+                <td style="max-width: 200px; width: 200px; word-wrap: break-word;">
+                    <label for="linkType">$action.getText('bulk.clone.issue.field.link')</label>
                 </td>
 
                 <td>
-                    <select class="select" id="linkType" name="linkType">
+                    <select class="select aui-ss-select" id="linkType" name="linkType">
                         #if (!$linkType || $linkType == "-1")
                             <option value="-1" selected="selected">$i18n.getText("common.words.pleaseselect")</option>
                         #end
