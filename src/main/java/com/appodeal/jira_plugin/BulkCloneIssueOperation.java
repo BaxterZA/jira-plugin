@@ -2,6 +2,7 @@ package com.appodeal.jira_plugin;
 
 import com.atlassian.jira.bulkedit.operation.BulkOperationException;
 import com.atlassian.jira.bulkedit.operation.ProgressAwareBulkOperation;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.IssueTypeManager;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueFactory;
@@ -11,6 +12,8 @@ import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.link.IssueLinkManager;
 import com.atlassian.jira.issue.link.IssueLinkType;
 import com.atlassian.jira.issue.link.IssueLinkTypeManager;
+import com.atlassian.jira.security.PermissionManager;
+import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.task.context.Context;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.web.bean.BulkEditBean;
@@ -55,21 +58,20 @@ public class BulkCloneIssueOperation implements ProgressAwareBulkOperation {
     @Override
     public boolean canPerform(BulkEditBean bulkEditBean, ApplicationUser applicationUser) {
         System.out.println("ZA-------canPerform-------ZA");
-//        List<Issue> selectedIssues = bulkEditBean.getSelectedIssues();
-//        PermissionManager permissionManager = ComponentAccessor.getPermissionManager();
-//        Iterator var5 = selectedIssues.iterator();
-//
-//        Issue issue;
-//        do {
-//            if (!var5.hasNext()) {
-//                return true;
-//            }
-//
-//            issue = (Issue)var5.next();
-//        } while(permissionManager.hasPermission(16, issue, remoteUser));
-//
-//        return false;
-        return true;
+        List<Issue> selectedIssues = bulkEditBean.getSelectedIssues();
+        PermissionManager permissionManager = ComponentAccessor.getPermissionManager();
+        Iterator var5 = selectedIssues.iterator();
+
+        Issue issue;
+        do {
+            if (!var5.hasNext()) {
+                return true;
+            }
+
+            issue = (Issue) var5.next();
+        } while (permissionManager.hasPermission(Permissions.CREATE_ISSUE, issue, applicationUser));
+
+        return false;
     }
 
     @Override
@@ -83,8 +85,7 @@ public class BulkCloneIssueOperation implements ProgressAwareBulkOperation {
         String link = (String) bulkEditBean.getFieldValues().get("bulk.clone.issue.operation.field.link");
         System.out.println("ZA-------get type: " + type + "-------ZA");
         System.out.println("ZA-------get prefix: " + prefix + "-------ZA");
-        System.out.println("ZA-------get prefix: " + link + "-------ZA");
-        IssueType issueType = issueTypeManager.getIssueType(type);
+        System.out.println("ZA-------get link: " + link + "-------ZA");
         IssueLinkType issueLinkType = issueLinkTypeManager.getIssueLinkType(Long.parseLong(link));
 
         System.out.println("ZA-------issues: " + selectedIssues.size() + "-------ZA");
@@ -94,13 +95,20 @@ public class BulkCloneIssueOperation implements ProgressAwareBulkOperation {
             if (issueManager.getIssueObject(issue.getId()) != null) {
                 try {
                     MutableIssue newIssue = issueFactory.cloneIssueWithAllFields(issue);
-                    newIssue.setSummary(prefix + " - " + newIssue.getSummary());
-                    newIssue.setIssueType(issueType);
+                    if (prefix != null && !prefix.isEmpty()) {
+                        newIssue.setSummary(prefix + " - " + newIssue.getSummary());
+                    }
+                    if (type != null && !type.isEmpty() && !type.equals("-1")) {
+                        System.out.println("ZA-------type is not empty: " + type + "-------ZA");
+                        IssueType issueType = issueTypeManager.getIssueType(type);
+                        newIssue.setIssueType(issueType);
+                    }
                     Issue clonedIssueObject = issueManager.createIssueObject(applicationUser, newIssue);
                     System.out.println("ZA-------clonedIssueObject: " + clonedIssueObject.getKey() + "-------ZA");
 
-                    issueLinkManager.createIssueLink(issue.getId(), clonedIssueObject.getId(),issueLinkType.getId(), 1L, applicationUser);
+                    issueLinkManager.createIssueLink(issue.getId(), clonedIssueObject.getId(), issueLinkType.getId(), 1L, applicationUser);
                 } catch (Exception var11) {
+                    System.out.println(var11.toString());
                     throw new BulkOperationException(var11);
                 }
             } else {

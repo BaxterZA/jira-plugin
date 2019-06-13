@@ -9,6 +9,7 @@ import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.link.IssueLinkType;
 import com.atlassian.jira.issue.link.IssueLinkTypeManager;
 import com.atlassian.jira.security.PermissionManager;
+import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.security.xsrf.RequiresXsrfCheck;
 import com.atlassian.jira.task.TaskManager;
 import com.atlassian.jira.util.I18nHelper;
@@ -20,6 +21,7 @@ import com.atlassian.jira.config.IssueTypeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 
@@ -42,7 +44,7 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
     private final ProgressAwareBulkOperation bilkCloneIssueOperations;
 
     public BulkCloneIssueAction() {
-        super((SearchService) ComponentAccessor.getComponent(SearchService.class), (BulkEditBeanSessionHelper) ComponentAccessor.getComponent(BulkEditBeanSessionHelper.class), (TaskManager) ComponentAccessor.getComponent(TaskManager.class), (I18nHelper) ComponentAccessor.getComponent(I18nHelper.class));
+        super(ComponentAccessor.getComponent(SearchService.class), ComponentAccessor.getComponent(BulkEditBeanSessionHelper.class), ComponentAccessor.getComponent(TaskManager.class), ComponentAccessor.getComponent(I18nHelper.class));
         System.out.println("ZA-------BulkCloneIssueAction INIT-------ZA");
         this.permissionManager = ComponentAccessor.getComponent(PermissionManager.class);
         this.issueTypeManager = ComponentAccessor.getComponent(IssueTypeManager.class);
@@ -53,35 +55,24 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
         System.out.println("ZA-------BulkCloneIssueAction END-------ZA");
     }
 
-//
-//    @Override
-//    public String doDefault() throws Exception {
-//        System.out.println("ZA----------doDefault---------ZA");
-//        return INPUT;
-//    }
-//
-//    @Override
-//    protected String doExecute() throws Exception {
-//        System.out.println("ZA----------doExecute---------ZA");
-//        return INPUT;
-//    }
-
+    @SuppressWarnings("unused")
     public boolean isHasAvailableActions() throws Exception {
         System.out.println("ZA-------isHasAvailableActions-------ZA");
         return this.getBulkCloneIssueOperation().canPerform(this.getBulkEditBean(), this.getLoggedInUser());
     }
 
+    @SuppressWarnings("unused")
     public String getOperationDetailsActionName() {
         System.out.println("ZA-------getOperationDetailsActionName-------ZA");
         return this.getBulkCloneIssueOperation().getOperationName() + "Details.jspa";
     }
 
-    public void doPerformValidation() {
+    private void doPerformValidation() {
         System.out.println("ZA-------doPerformValidation-------ZA");
         try {
             getDataFromScreen();
 
-            if (!this.permissionManager.hasPermission(33, this.getLoggedInUser())) {
+            if (!this.permissionManager.hasPermission(Permissions.BULK_CHANGE, this.getLoggedInUser())) {
                 this.addErrorMessage(this.getText("bulk.change.no.permission", String.valueOf(this.getBulkEditBean().getSelectedIssues().size())));
             }
 
@@ -110,17 +101,28 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
     private void doInputValidation() {
         System.out.println("ZA-------doInputValidation-------ZA");
         if (this.prefix == null) {
-            addErrorMessage(getText("bulk.clone.issue.prefix.is.null"));
-        }
-        if ((this.issueType == null) || (this.issueType.equals("-1"))) {
-            addErrorMessage(getText("bulk.clone.issue.type.is.null"));
+            this.prefix = "";
         }
         if ((this.linkType == null) || (this.linkType.equals("-1"))) {
-            addErrorMessage(getText("bulk.clone.issue.type.is.null"));
+            this.linkType = String.valueOf(getDefaultCloneIssueLinkType());
+            if (this.linkType == null) {
+                addErrorMessage(getText("bulk.clone.issue.link.is.null"));
+            }
         }
     }
 
-    public String doDetails() throws Exception {
+    @Nullable
+    private Long getDefaultCloneIssueLinkType() {
+        Long cloneType = null;
+        for (IssueLinkType issueLinkType : links) {
+            if (issueLinkType.getName().equalsIgnoreCase("Cloners")) {
+                cloneType = issueLinkType.getId();
+            }
+        }
+        return cloneType;
+    }
+
+    public String doDetails() {
         System.out.println("ZA-------doDetails-------ZA");
         if (this.getBulkEditBean() == null) {
             return this.redirectToStart();
@@ -140,7 +142,7 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
         }
     }
 
-    public String doDetailsValidation() throws Exception {
+    public String doDetailsValidation() {
         System.out.println("ZA-------doDetailsValidation-------ZA");
         if (this.getBulkEditBean() == null) {
             return this.redirectToStart();
@@ -148,7 +150,7 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
             doPerformValidation();
             doInputValidation();
             if (this.invalidInput()) {
-                return "error";
+                return ERROR;
             }
 
             BulkEditBean bulkEditBean = this.getBulkEditBean();
@@ -169,7 +171,7 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
         } else {
             doPerformValidation();
             if (invalidInput()) {
-                return "error";
+                return ERROR;
             }
             BulkEditBean bulkEditBean = this.getBulkEditBean();
             System.out.println("ZA-------set type: " + this.issueType + "-------ZA");
@@ -189,66 +191,80 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
         return this.bilkCloneIssueOperations;
     }
 
+
+    @SuppressWarnings("unused")
     public Collection<IssueType> getTypes() {
         System.out.println("ZA-------getTypes-------ZA");
         return types;
     }
 
+    @SuppressWarnings("unused")
     public void setTypes(Collection<IssueType> types) {
         System.out.println("ZA-------setTypes-------ZA");
         this.types = types;
     }
 
+    @SuppressWarnings("unused")
     public Collection<IssueLinkType> getLinks() {
         System.out.println("ZA-------getLinks-------ZA");
         return this.links;
     }
 
+    @SuppressWarnings("unused")
     public void setLinks(Collection<IssueLinkType> links) {
         this.links = links;
     }
 
+    @SuppressWarnings("unused")
     public String getPrefixName() {
         System.out.println("ZA-------getPrefixName: " + this.prefix + "-------ZA");
         return this.prefix;
     }
 
+    @SuppressWarnings("unused")
     public String getTypeName() {
         System.out.println("ZA-------getTypeName: " + this.issueType + "-------ZA");
-        if ((this.issueType != null) && (!this.issueType.equals("-1"))) {
+        if ((this.issueType != null) && (!this.issueType.equals("-1")) && (!this.issueType.isEmpty())) {
             return this.issueTypeManager.getIssueType(this.issueType).getNameTranslation();
         }
-        return "Don't change";
+        return "";
     }
 
+    @SuppressWarnings("unused")
     public String getLinkName() {
         System.out.println("ZA-------getLinkName: " + this.linkType + "-------ZA");
-        if ((this.linkType != null) && (!this.linkType.equals("-1"))) {
+        if ((this.linkType != null) && (!this.linkType.equals("-1")) && (!this.linkType.isEmpty())) {
             return this.issueLinkTypeManager.getIssueLinkType(Long.parseLong(this.linkType)).getName();
         }
-        return "Don't change";
+        return "";
     }
 
+    @SuppressWarnings("unused")
     public String getIssueType() {
         return issueType;
     }
 
+    @SuppressWarnings("unused")
     public void setIssueType(String issueType) {
         this.issueType = issueType;
     }
 
+    @SuppressWarnings("unused")
     public String getPrefix() {
         return prefix;
     }
 
+    @SuppressWarnings("unused")
     public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
 
+    @SuppressWarnings("unused")
     public String getLinkType() {
         return linkType;
     }
 
+    @SuppressWarnings("unused")
     public void setLinkType(String linkType) {
         this.linkType = linkType;
     }
