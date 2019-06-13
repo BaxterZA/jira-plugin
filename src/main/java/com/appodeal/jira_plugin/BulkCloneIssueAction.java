@@ -5,7 +5,6 @@ import com.atlassian.jira.bulkedit.BulkOperationManager;
 import com.atlassian.jira.bulkedit.operation.ProgressAwareBulkOperation;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.event.operation.SpanningOperation;
-import com.atlassian.jira.event.operation.SpanningOperationType;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.link.IssueLinkType;
 import com.atlassian.jira.issue.link.IssueLinkTypeManager;
@@ -15,11 +14,8 @@ import com.atlassian.jira.task.TaskManager;
 import com.atlassian.jira.util.I18nHelper;
 import com.atlassian.jira.util.ParameterUtils;
 import com.atlassian.jira.web.action.issue.bulkedit.AbstractBulkOperationDetailsAction;
-import com.atlassian.jira.web.action.issue.bulkedit.BulkDelete;
 import com.atlassian.jira.web.bean.BulkEditBean;
 import com.atlassian.jira.web.bean.BulkEditBeanSessionHelper;
-//import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-
 import com.atlassian.jira.config.IssueTypeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,18 +53,18 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
         System.out.println("ZA-------BulkCloneIssueAction END-------ZA");
     }
 
-
-    @Override
-    public String doDefault() throws Exception {
-        System.out.println("ZA----------doDefault---------ZA");
-        return INPUT;
-    }
-
-    @Override
-    protected String doExecute() throws Exception {
-        System.out.println("ZA----------doExecute---------ZA");
-        return INPUT;
-    }
+//
+//    @Override
+//    public String doDefault() throws Exception {
+//        System.out.println("ZA----------doDefault---------ZA");
+//        return INPUT;
+//    }
+//
+//    @Override
+//    protected String doExecute() throws Exception {
+//        System.out.println("ZA----------doExecute---------ZA");
+//        return INPUT;
+//    }
 
     public boolean isHasAvailableActions() throws Exception {
         System.out.println("ZA-------isHasAvailableActions-------ZA");
@@ -140,7 +136,7 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
             }
 
             bulkEditBean.setCurrentStep(3);
-            return "input";
+            return INPUT;
         }
     }
 
@@ -161,7 +157,7 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
             bulkEditBean.addAvailablePreviousStep(2);
             bulkEditBean.addAvailablePreviousStep(3);
             bulkEditBean.setCurrentStep(4);
-            return "input";
+            return INPUT;
         }
     }
 
@@ -182,11 +178,9 @@ public class BulkCloneIssueAction extends AbstractBulkOperationDetailsAction {
             bulkEditBean.getFieldValues().put("bulk.clone.issue.operation.field.type", this.issueType);
             bulkEditBean.getFieldValues().put("bulk.clone.issue.operation.field.link", this.linkType);
             bulkEditBean.getFieldValues().put("bulk.clone.issue.operation.field.prefix", this.prefix);
-            String taskName = this.getText("bulk.operation.progress.taskname.clone.issue", bulkEditBean.getSelectedIssuesIncludingSubTasks().size());
 
-            return this.submitBulkOperationTask(bulkEditBean, this.getBulkCloneIssueOperation(), taskName, SpanningOperation.builder().generatedId().build());
-//
-//            return this.submitBulkOperationTask(bulkEditBean, this.getBulkCloneIssueOperation(), taskName);
+            String taskName = this.getText("bulk.operation.progress.taskname.clone.issue", bulkEditBean.getSelectedIssuesIncludingSubTasks().size());
+            return this.submitBulkOperationTask(bulkEditBean, this.getBulkCloneIssueOperation(), taskName, SpanningOperation.builder().type("BULK_CLONE").generatedId().build());
         }
     }
 
