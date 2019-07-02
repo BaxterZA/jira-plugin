@@ -30,9 +30,9 @@
     </webwork1>
 
 
-    <web-section key="my-custom-clone-actions-section"  location="opsbar-operations" weight="100"/>
+    <web-section key="custom-clone-actions-section"  location="opsbar-operations" weight="100"/>
 
-    <web-item key="custom-clone-issue" name="Custom clone issue" section="my-custom-clone-actions-section" weight="100">
+    <web-item key="custom-clone-issue" name="Custom clone issue" section="custom-clone-actions-section" weight="100">
         <label key="custom.clone.issue.operation.name"/>
         <tooltip key="custom.clone.issue.plugin.issue.name"/>
         <link linkId="custom-clone-issue">
