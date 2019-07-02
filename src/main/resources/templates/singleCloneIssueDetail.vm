@@ -1,0 +1,93 @@
+#disable_html_escaping()
+<html>
+<head>
+    <title>Clone issue $req.getParameter("id")</title>
+</head>
+
+<body class="aui-page-focused aui-page-focused-large">
+<header class="aui-page-header">
+    <div class="aui-page-header-inner">
+        <div class="aui-page-header-main">
+            <h1>$action.getText("custom.clone.issue.plugin.issue.name"): $key</h1>
+        </div>
+    </div>
+</header>
+
+<form action="CustomCloneSingleIssueDetail.jspa?id=$id" class="aui top-label" id="bulkedit" method="post">
+    #if ($action.hasAnyErrors())
+        <div class="aui-message aui-message-error">
+            <ul>
+                #foreach ($error in $action.getErrorMessages())
+                    <li>$textutils.htmlEncode(${error})</li>
+                #end
+            </ul>
+        </div>
+    #else
+    <div class="form-body">
+        <table id="label">
+            <tbody>
+            <tr class="availableActionRow">
+
+                <td style="max-width: 200px; width: 200px; word-wrap: break-word;">
+                    <label for="prefix">$action.getText('bulk.clone.issue.field.prefix')</label>
+                </td>
+
+                <td class="aui-field-labelpicker" id="labels_container">
+                    <input class="text" type="text" id="prefix" name="prefix"
+                           value="$textutils.htmlEncode($!newPrefix)">
+                ##                    <div class="description">${i18n.getText('custom.label.edit.start.typing')}</div>
+                </td>
+            </tr>
+
+
+            <tr class="availableActionRow">
+
+                <td style="max-width: 200px; width: 200px; word-wrap: break-word;">
+                    <label for="issueType">$action.getText('bulk.clone.issue.field.type')</label>
+                </td>
+
+                <td>
+                    <select class="select aui-ss-select" id="issueType" name="issueType">
+                        #foreach ($type in $types)
+                            <option#if ($issueType && $type.getId() && $issueType == $type.getId())
+                                    selected="selected"#end value="$!type.getId()">
+                                $textutils.htmlEncode($type.getNameTranslation())
+                            </option>
+                        #end
+                    </select>
+                </td>
+            </tr>
+
+
+            <tr class="availableActionRow">
+
+                <td style="max-width: 200px; width: 200px; word-wrap: break-word;">
+                    <label for="linkType">$action.getText('bulk.clone.issue.field.link')</label>
+                </td>
+
+                <td>
+                    <select class="select aui-ss-select" id="linkType" name="linkType">
+                        #foreach ($link in $links)
+                            <option#if ($linkType && $link.getId() && $linkType == $link.getId())
+                                    selected="selected"#end value="$!link.getId()">
+                                $textutils.htmlEncode($link.getName())
+                            </option>
+                        #end
+                    </select>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="buttons-container form-footer">
+        <div class="buttons">
+            <input accesskey="s" class="aui-button" id="issue-create-submit" name="Create"
+                   title="Press Ctrl+Alt+s to submit this form" type="submit" value="Create">
+            <a accesskey="`" class="aui-button aui-button-link cancel" href="$req.contextPath/browse/$issueKey"
+               id="issue-create-cancel" title="Press Ctrl+Alt+` to cancel">Cancel</a>
+
+        </div>
+    #end
+</form>
+</body>
+</html>

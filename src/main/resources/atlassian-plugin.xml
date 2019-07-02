@@ -28,4 +28,30 @@
             </action>
         </actions>
     </webwork1>
+
+
+    <web-section key="my-custom-clone-actions-section"  location="opsbar-operations" weight="100"/>
+
+    <web-item key="custom-clone-issue" name="Custom clone issue" section="my-custom-clone-actions-section" weight="100">
+        <label key="custom.clone.issue.operation.name"/>
+        <tooltip key="custom.clone.issue.plugin.issue.name"/>
+        <link linkId="custom-clone-issue">
+            /secure/CustomCloneSingleIssueDetail!default.jspa?id=${issueId}
+        </link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.HasProjectPermissionCondition">
+            <param name="permission">create</param>
+        </condition>
+        <styleClass>issueaction-clone-issue</styleClass>
+    </web-item>
+
+    <webwork1 key="reference-actions" name="Custom clone Action" class="java.lang.Object">
+        <actions>
+            <action name="com.appodeal.jira_plugin.SingleCloneIssueAction" alias="CustomCloneSingleIssueDetail">
+                <view name="input">templates/singleCloneIssueDetail.vm</view>
+                <view name="success">templates/singleCloneIssueDetail.vm</view>
+                <view name="error">templates/singleCloneIssueDetail.vm</view>
+            </action>
+        </actions>
+    </webwork1>
+
 </atlassian-plugin>
